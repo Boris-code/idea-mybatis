@@ -142,12 +142,23 @@ public class MybatisGenerator {
                 Set<String> fullyqualifiedTables = new HashSet<>();
                 Set<String> contexts = new HashSet<>();
                 try {
+                    System.out.println("[MybatisGenerator] Starting generation...");
+                    System.out.println("[MybatisGenerator] Project folder: " + config.getProjectFolder());
+                    System.out.println("[MybatisGenerator] Model package: " + config.getModelPackage());
+                    System.out.println("[MybatisGenerator] Dao package: " + config.getDaoPackage());
+                    System.out.println("[MybatisGenerator] Xml path: " + config.getXmlMvnPath());
+                    
                     IntellijMyBatisGenerator intellijMyBatisGenerator = new IntellijMyBatisGenerator(configuration, shellCallback, warnings);
                     intellijMyBatisGenerator.generate(new GeneratorCallback(), contexts, fullyqualifiedTables, intellijTableInfo);
+                    
+                    System.out.println("[MybatisGenerator] Generation completed!");
                     if (!warnings.isEmpty()) {
+                        System.out.println("[MybatisGenerator] Warnings: " + warnings);
                         result.addAll(warnings);
                     }
                 } catch (Exception e) {
+                    System.out.println("[MybatisGenerator] Error: " + e.getMessage());
+                    e.printStackTrace();
                     Messages.showMessageDialog(e.getMessage(), "MybatisGenerator failure", Messages.getErrorIcon());
                     result.add(e.getMessage());
                 }
@@ -439,10 +450,9 @@ public class MybatisGenerator {
         if (config.isOffsetLimit()) {
             if (DbType.MySQL.equals(dbType)
                     || DbType.PostgreSQL.equals(dbType)) {
-                PluginConfiguration mySQLLimitPlugin = new PluginConfiguration();
-                mySQLLimitPlugin.addProperty("type", "cn.kt.MySQLLimitPlugin");
-                mySQLLimitPlugin.setConfigurationType("cn.kt.MySQLLimitPlugin");
-                context.addPluginConfiguration(mySQLLimitPlugin);
+                PluginConfiguration limitPlugin = new PluginConfiguration();
+                limitPlugin.setConfigurationType("com.wuzhizhan.mybatis.generate.plugin.PageLimitPlugin");
+                context.addPluginConfiguration(limitPlugin);
             }
         }
 
