@@ -69,16 +69,36 @@ idea-mybatis是一个提高mybatis编码的插件。实现了dao代码跳转到m
 - xml path: `src/main/resources/mappers`
 - 默认勾选: `Page`、`comment`、`Use-Schema`、`Use-Example`、`Overwrite-Xml`、`Overwrite-Java`、`Use-Lombox`、`toString/hashCode/equals`、`Use-Swagger`
 
-## TODO
-- 根据数据库字段生产bean
-- 快捷生成CURD操作
+## 编译打包
+
+### 环境要求
+- JDK 8+
+- Gradle 7.x
+
+### 编译命令
+```bash
+# 进入项目目录
+cd idea-mybatis
+
+# 编译并打包插件
+./gradlew buildPlugin
+```
+
+### 输出位置
+编译成功后，插件zip包位于：
+```
+build/distributions/idea-mybatis-{version}.zip
+```
+
+### 安装插件
+1. 打开 IntelliJ IDEA
+2. 进入 `Preferences/Settings` → `Plugins`
+3. 点击右上角 ⚙️ → `Install Plugin from Disk...`
+4. 选择编译生成的 `idea-mybatis-{version}.zip` 文件
+5. 重启 IDEA
+
 
 ## 参考
 - better-mybatis-generator https://github.com/kmaster/better-mybatis-generator
 - mybatis-generator-gui https://github.com/zouzg/mybatis-generator-gui
 - MyBatisCodeHelper-Pro https://github.com/gejun123456/MyBatisCodeHelper-Pro
-
-## 我的微信公众号 - it新技术
-更多内容，欢迎关注公众号 【it新技术】
-- ![](https://images.gitee.com/uploads/images/2020/0121/151850_6e6ac5da_131460.jpeg)
-![](https://images.gitee.com/uploads/images/2020/0121/151850_003d690f_131460.jpeg)
