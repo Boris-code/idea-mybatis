@@ -83,6 +83,7 @@ public class MybatisGeneratorMainUI extends JFrame {
     private JCheckBox useTableNameAliasBox = new JCheckBox("Use-Alias(启用别名查询)");
     private JCheckBox useExampleBox = new JCheckBox("Use-Example");
     private JCheckBox useLombokBox = new JCheckBox("Use-Lombox");
+    private JCheckBox useSwaggerBox = new JCheckBox("Use-Swagger");
 
 
     public MybatisGeneratorMainUI(AnActionEvent anActionEvent) throws HeadlessException {
@@ -223,7 +224,11 @@ public class MybatisGeneratorMainUI extends JFrame {
         });
         modelPanel.add(modelPackageFieldBtn);
         modelPanel.add(new JLabel("path:"));
-        modelMvnField.setText("src/main/java");
+        if (config != null && !StringUtils.isEmpty(config.getModelMvnPath())) {
+            modelMvnField.setText(config.getModelMvnPath());
+        } else {
+            modelMvnField.setText("src/main/java");
+        }
         modelPanel.add(modelMvnField);
 
 
@@ -240,7 +245,7 @@ public class MybatisGeneratorMainUI extends JFrame {
             if (config != null && !StringUtils.isEmpty(config.getDaoPostfix())) {
                 daoPostfixField.setText(config.getDaoPostfix());
             } else {
-                daoPostfixField.setText("Dao");
+                daoPostfixField.setText("Mapper");
             }
             daoPanel.add(new JLabel("dao postfix:"));
             daoPanel.add(daoPostfixField);
@@ -248,7 +253,7 @@ public class MybatisGeneratorMainUI extends JFrame {
             if (config != null && !StringUtils.isEmpty(config.getDaoPostfix())) {
                 daoNameField.setText(modelName + config.getDaoPostfix());
             } else {
-                daoNameField.setText(modelName + "Dao");
+                daoNameField.setText(modelName + "Mapper");
             }
             daoPanel.add(new JLabel("name:"));
             daoPanel.add(daoNameField);
@@ -275,7 +280,11 @@ public class MybatisGeneratorMainUI extends JFrame {
         });
         daoPanel.add(packageBtn2);
         daoPanel.add(new JLabel("path:"));
-        daoMvnField.setText("src/main/java");
+        if (config != null && !StringUtils.isEmpty(config.getDaoMvnPath())) {
+            daoMvnField.setText(config.getDaoMvnPath());
+        } else {
+            daoMvnField.setText("src/main/java");
+        }
         daoPanel.add(daoMvnField);
 
 
@@ -294,7 +303,11 @@ public class MybatisGeneratorMainUI extends JFrame {
         }
         xmlMapperPanel.add(xmlPackageField);
         xmlMapperPanel.add(new JLabel("path:"));
-        xmlMvnField.setText("src/main/resources");
+        if (config != null && !StringUtils.isEmpty(config.getXmlMvnPath())) {
+            xmlMvnField.setText(config.getXmlMvnPath());
+        } else {
+            xmlMvnField.setText("src/main/resources/mappers");
+        }
         xmlMapperPanel.add(xmlMvnField);
 
         /**
@@ -303,12 +316,16 @@ public class MybatisGeneratorMainUI extends JFrame {
         JBPanel optionsPanel = new JBPanel(new GridLayout(5, 5, 5, 5));
         optionsPanel.setBorder(BorderFactory.createTitledBorder("options"));
         if (config == null) {
+            // 默认选项：page、comment、Use-Schema、Use-Example、Overwrite-xml、Overwrite-java、Use-Lombox、toString/hashCode/equals、Use-swagger
+            offsetLimitBox.setSelected(true);
             commentBox.setSelected(true);
             overrideXMLBox.setSelected(true);
             overrideJavaBox.setSelected(true);
             useSchemaPrefixBox.setSelected(true);
             useLombokBox.setSelected(true);
-
+            needToStringHashcodeEqualsBox.setSelected(true);
+            useExampleBox.setSelected(true);
+            useSwaggerBox.setSelected(true);
         } else {
             if (config.isOffsetLimit()) {
                 offsetLimitBox.setSelected(true);
@@ -356,6 +373,9 @@ public class MybatisGeneratorMainUI extends JFrame {
             if (config.isUseLombokPlugin()) {
                 useLombokBox.setSelected(true);
             }
+            if (config.isUseSwagger()) {
+                useSwaggerBox.setSelected(true);
+            }
         }
         optionsPanel.add(offsetLimitBox);
         optionsPanel.add(commentBox);
@@ -372,6 +392,7 @@ public class MybatisGeneratorMainUI extends JFrame {
         optionsPanel.add(useTableNameAliasBox);
         optionsPanel.add(useExampleBox);
         optionsPanel.add(useLombokBox);
+        optionsPanel.add(useSwaggerBox);
 
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         mainPanel.setBorder(new EmptyBorder(10, 30, 5, 40));
@@ -428,6 +449,16 @@ public class MybatisGeneratorMainUI extends JFrame {
                         daoPackageField.setText(selectedConfig.getDaoPackage());
                         xmlPackageField.setText(selectedConfig.getXmlPackage());
                         projectFolderBtn.setText(selectedConfig.getProjectFolder());
+                        // 加载path配置
+                        if (selectedConfig.getModelMvnPath() != null) {
+                            modelMvnField.setText(selectedConfig.getModelMvnPath());
+                        }
+                        if (selectedConfig.getDaoMvnPath() != null) {
+                            daoMvnField.setText(selectedConfig.getDaoMvnPath());
+                        }
+                        if (selectedConfig.getXmlMvnPath() != null) {
+                            xmlMvnField.setText(selectedConfig.getXmlMvnPath());
+                        }
                         offsetLimitBox.setSelected(selectedConfig.isOffsetLimit());
                         commentBox.setSelected(selectedConfig.isComment());
                         overrideXMLBox.setSelected(selectedConfig.isOverrideXML());
@@ -443,6 +474,7 @@ public class MybatisGeneratorMainUI extends JFrame {
                         useTableNameAliasBox.setSelected(selectedConfig.isUseTableNameAlias());
                         useExampleBox.setSelected(selectedConfig.isUseExample());
                         useLombokBox.setSelected(selectedConfig.isUseLombokPlugin());
+                        useSwaggerBox.setSelected(selectedConfig.isUseSwagger());
                     }
                 }
             }
@@ -529,6 +561,7 @@ public class MybatisGeneratorMainUI extends JFrame {
                 generator_config.setUseTableNameAlias(useTableNameAliasBox.getSelectedObjects() != null);
                 generator_config.setUseExample(useExampleBox.getSelectedObjects() != null);
                 generator_config.setUseLombokPlugin(useLombokBox.getSelectedObjects() != null);
+                generator_config.setUseSwagger(useSwaggerBox.getSelectedObjects() != null);
 
                 generator_config.setModelMvnPath(modelMvnField.getText());
                 generator_config.setDaoMvnPath(daoMvnField.getText());
@@ -573,6 +606,7 @@ public class MybatisGeneratorMainUI extends JFrame {
                     generator_config.setUseTableNameAlias(useTableNameAliasBox.getSelectedObjects() != null);
                     generator_config.setUseExample(useExampleBox.getSelectedObjects() != null);
                     generator_config.setUseLombokPlugin(useLombokBox.getSelectedObjects() != null);
+                    generator_config.setUseSwagger(useSwaggerBox.getSelectedObjects() != null);
 
                     generator_config.setModelMvnPath(modelMvnField.getText());
                     generator_config.setDaoMvnPath(daoMvnField.getText());

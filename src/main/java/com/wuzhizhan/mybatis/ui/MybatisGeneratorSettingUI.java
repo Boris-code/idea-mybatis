@@ -49,6 +49,7 @@ public class MybatisGeneratorSettingUI extends JDialog {
     private JCheckBox useTableNameAliasBox = new JCheckBox("Use-Alias(启用别名查询)");
     private JCheckBox useExampleBox = new JCheckBox("Use-Example");
     private JCheckBox useLombokBox = new JCheckBox("Use-Lombox");
+    private JCheckBox useSwaggerBox = new JCheckBox("Use-Swagger");
 
     private PersistentConfig config;
 
@@ -113,7 +114,7 @@ public class MybatisGeneratorSettingUI extends JDialog {
         daoPanel.setBorder(BorderFactory.createTitledBorder("dao setting"));
 
         daoPanel.add(new JLabel("dao postfix:"));
-        daoPostfixField.setText("Dao");
+        daoPostfixField.setText("Mapper");
         daoPanel.add(daoPostfixField);
 
         JLabel labelLeft5 = new JLabel("package:");
@@ -145,7 +146,7 @@ public class MybatisGeneratorSettingUI extends JDialog {
         xmlMapperPanel.add(labelLeft6);
         xmlMapperPanel.add(xmlPackageField);
         xmlMapperPanel.add(new JLabel("path:"));
-        xmlMvnField.setText("src/main/resources");
+        xmlMvnField.setText("src/main/resources/mappers");
         xmlMapperPanel.add(xmlMvnField);
 
 
@@ -155,11 +156,16 @@ public class MybatisGeneratorSettingUI extends JDialog {
         JBPanel optionsPanel = new JBPanel(new GridLayout(5, 5, 5, 5));
         optionsPanel.setBorder(BorderFactory.createTitledBorder("options panel"));
 
+        // 默认选项：page、comment、Use-Schema、Use-Example、Overwrite-xml、Overwrite-java、Use-Lombox、toString/hashCode/equals、Use-swagger
+        offsetLimitBox.setSelected(true);
         commentBox.setSelected(true);
         overrideXMLBox.setSelected(true);
         overrideJavaBox.setSelected(true);
         useSchemaPrefixBox.setSelected(true);
         useLombokBox.setSelected(true);
+        needToStringHashcodeEqualsBox.setSelected(true);
+        useExampleBox.setSelected(true);
+        useSwaggerBox.setSelected(true);
 
         optionsPanel.add(offsetLimitBox);
         optionsPanel.add(commentBox);
@@ -176,6 +182,7 @@ public class MybatisGeneratorSettingUI extends JDialog {
         optionsPanel.add(useTableNameAliasBox);
         optionsPanel.add(useExampleBox);
         optionsPanel.add(useLombokBox);
+        optionsPanel.add(useSwaggerBox);
 
         /**
          * 设置面板内容
@@ -192,12 +199,31 @@ public class MybatisGeneratorSettingUI extends JDialog {
         Map<String, Config> initConfig = config.getInitConfig();
         if (initConfig != null) {
             Config config = initConfig.get("initConfig");
-            daoPostfixField.setText(config.getDaoPostfix());
-            modelPackageField.setText(config.getModelPackage());
-            daoPackageField.setText(config.getDaoPackage());
-            xmlPackageField.setText(config.getXmlPackage());
-
-            projectFolderBtn.setText(config.getProjectFolder());
+            if (config.getDaoPostfix() != null) {
+                daoPostfixField.setText(config.getDaoPostfix());
+            }
+            if (config.getModelPackage() != null) {
+                modelPackageField.setText(config.getModelPackage());
+            }
+            if (config.getDaoPackage() != null) {
+                daoPackageField.setText(config.getDaoPackage());
+            }
+            if (config.getXmlPackage() != null) {
+                xmlPackageField.setText(config.getXmlPackage());
+            }
+            if (config.getProjectFolder() != null) {
+                projectFolderBtn.setText(config.getProjectFolder());
+            }
+            // 加载path配置
+            if (config.getModelMvnPath() != null) {
+                modelMvnField.setText(config.getModelMvnPath());
+            }
+            if (config.getDaoMvnPath() != null) {
+                daoMvnField.setText(config.getDaoMvnPath());
+            }
+            if (config.getXmlMvnPath() != null) {
+                xmlMvnField.setText(config.getXmlMvnPath());
+            }
             offsetLimitBox.setSelected(config.isOffsetLimit());
             commentBox.setSelected(config.isComment());
             overrideXMLBox.setSelected(config.isOverrideXML());
@@ -213,9 +239,10 @@ public class MybatisGeneratorSettingUI extends JDialog {
             useTableNameAliasBox.setSelected(config.isUseTableNameAlias());
             useExampleBox.setSelected(config.isUseExample());
             useLombokBox.setSelected(config.isUseLombokPlugin());
+            useSwaggerBox.setSelected(config.isUseSwagger());
         } else {
-            modelPackageField.addFocusListener(new JTextFieldHintListener(modelPackageField, "generator"));
-            daoPackageField.addFocusListener(new JTextFieldHintListener(daoPackageField, "generator"));
+            modelPackageField.addFocusListener(new JTextFieldHintListener(modelPackageField, "com.alibaba.intl.dt.dataant.entity.generator"));
+            daoPackageField.addFocusListener(new JTextFieldHintListener(daoPackageField, "com.alibaba.intl.dt.dataant.mapper.generator"));
             xmlPackageField.addFocusListener(new JTextFieldHintListener(xmlPackageField, "generator"));
         }
     }
@@ -247,6 +274,10 @@ public class MybatisGeneratorSettingUI extends JDialog {
         config.setDaoPackage(daoPackageField.getText());
         config.setXmlPackage(xmlPackageField.getText());
         config.setProjectFolder(projectFolderBtn.getText());
+        // 保存path配置
+        config.setModelMvnPath(modelMvnField.getText());
+        config.setDaoMvnPath(daoMvnField.getText());
+        config.setXmlMvnPath(xmlMvnField.getText());
 
         config.setOffsetLimit(offsetLimitBox.getSelectedObjects() != null);
         config.setComment(commentBox.getSelectedObjects() != null);
@@ -263,10 +294,9 @@ public class MybatisGeneratorSettingUI extends JDialog {
         config.setUseTableNameAlias(useTableNameAliasBox.getSelectedObjects() != null);
         config.setUseExample(useExampleBox.getSelectedObjects() != null);
         config.setUseLombokPlugin(useLombokBox.getSelectedObjects() != null);
+        config.setUseSwagger(useSwaggerBox.getSelectedObjects() != null);
         initConfig.put(config.getName(), config);
         this.config.setInitConfig(initConfig);
-
-
     }
 
     public void reset() {

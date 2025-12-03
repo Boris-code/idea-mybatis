@@ -125,6 +125,7 @@ public class Config {
     private String encoding;
     private String connectorJarPath;
     private boolean useLombokPlugin;
+    private boolean useSwagger;
 
     public boolean isUseLombokPlugin() {
         return useLombokPlugin;
@@ -132,6 +133,14 @@ public class Config {
 
     public void setUseLombokPlugin(boolean useLombokPlugin) {
         this.useLombokPlugin = useLombokPlugin;
+    }
+
+    public boolean isUseSwagger() {
+        return useSwagger;
+    }
+
+    public void setUseSwagger(boolean useSwagger) {
+        this.useSwagger = useSwagger;
     }
 
     public boolean isJsr310Support() {
