@@ -467,10 +467,9 @@ public class MybatisGenerator {
         if (config.isNeedForUpdate()) {
             if (DbType.MySQL.equals(dbType)
                     || DbType.PostgreSQL.equals(dbType)) {
-                PluginConfiguration mySQLForUpdatePlugin = new PluginConfiguration();
-                mySQLForUpdatePlugin.addProperty("type", "cn.kt.MySQLForUpdatePlugin");
-                mySQLForUpdatePlugin.setConfigurationType("cn.kt.MySQLForUpdatePlugin");
-                context.addPluginConfiguration(mySQLForUpdatePlugin);
+                PluginConfiguration forUpdatePlugin = new PluginConfiguration();
+                forUpdatePlugin.setConfigurationType("com.wuzhizhan.mybatis.generate.plugin.ForUpdatePlugin");
+                context.addPluginConfiguration(forUpdatePlugin);
             }
         }
 
@@ -479,8 +478,7 @@ public class MybatisGenerator {
             if (DbType.MySQL.equals(dbType)
                     || DbType.PostgreSQL.equals(dbType)) {
                 PluginConfiguration repositoryPlugin = new PluginConfiguration();
-                repositoryPlugin.addProperty("type", "cn.kt.RepositoryPlugin");
-                repositoryPlugin.setConfigurationType("cn.kt.RepositoryPlugin");
+                repositoryPlugin.setConfigurationType("com.wuzhizhan.mybatis.generate.plugin.RepositoryAnnotationPlugin");
                 context.addPluginConfiguration(repositoryPlugin);
             }
         }
@@ -489,8 +487,7 @@ public class MybatisGenerator {
             if (DbType.MySQL.equals(dbType)
                     || DbType.PostgreSQL.equals(dbType)) {
                 PluginConfiguration commonDAOInterfacePlugin = new PluginConfiguration();
-                commonDAOInterfacePlugin.addProperty("type", "cn.kt.CommonDAOInterfacePlugin");
-                commonDAOInterfacePlugin.setConfigurationType("cn.kt.CommonDAOInterfacePlugin");
+                commonDAOInterfacePlugin.setConfigurationType("com.wuzhizhan.mybatis.generate.plugin.CommonDaoInterfacePlugin");
                 context.addPluginConfiguration(commonDAOInterfacePlugin);
             }
         }
