@@ -499,6 +499,13 @@ public class MybatisGenerator {
             context.addPluginConfiguration(pluginConfiguration);
         }
 
+        // Swagger 插件
+        if (config.isUseSwagger()) {
+            PluginConfiguration swaggerPlugin = new PluginConfiguration();
+            swaggerPlugin.setConfigurationType("com.wuzhizhan.mybatis.generate.plugin.SwaggerAnnotationPlugin");
+            context.addPluginConfiguration(swaggerPlugin);
+        }
+
     }
 
     /**
